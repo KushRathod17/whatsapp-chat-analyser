@@ -7,58 +7,43 @@ import emoji
 extract = URLExtract()
 
 def fetch_stats(selected_user, df):
-    # 1. Filter the dataframe FIRST
+
     if selected_user != 'overall':
         df = df[df['user'] == selected_user]
-
-    # 2. NOW count the messages
     num_messages = df.shape[0]
 
-    # 3. NOW count the words
     words = []
     for message in df['message']:
         words.extend(message.split())
-
-    # 4. Count Media
     num_media_messages = df[df['message'].str.contains('<Media omitted>')].shape[0]
 
     links = []
     for message in df['message']:
         links.extend(extract.find_urls(message))
 
-    # 5. Return ALL FOUR values back to app.py
     return num_messages, len(words), num_media_messages, len(links)
 
 def most_busy_users(df):
     x = df['user'].value_counts().head()
 
-    # Calculate the percentages
+    #PERCENTAGE
     new_df = round((df['user'].value_counts() / df.shape[0]) * 100, 2).reset_index()
-
-    # Fix the column names
     new_df.columns = ['Name', 'Percent']
-
-    # JUST RETURN THE DATA. No zombie code here!
     return x, new_df
 
 def create_wordcloud(selected_user, df):
-    # REMEMBER: If you used the absolute path earlier, update this line!
-    f = open('Whatsapp_chats/stop_hinglish.txt', 'r')
+    f = open('stop_hinglish.txt', 'r')
     stop_words = f.read()
 
     if selected_user != 'overall':
         df = df[df['user'] == selected_user]
-
-    # 1. NUKE SYSTEM MESSAGES
+        
     temp = df[df['user'] != 'group_notification']
     temp = temp[~temp['message'].str.contains('<Media omitted>', na=False)]
-
-    # 2. THE NUKE: Kills ANY message that contains the word "edited", regardless of case!
     temp = temp[~temp['message'].str.contains('edited', case=False, na=False)]
 
     def remove_stop_words(message):
         y = []
-        # The ultimate banned list
         banned = ['media', 'omitted', 'message', 'deleted', 'edited', 'this', 'was']
         for word in message.lower().split():
             clean_word = word.strip(".,!?-@*\"'~:;<>")
@@ -77,15 +62,12 @@ def most_common_words(selected_user, df):
     if selected_user != 'overall':
         df = df[df['user'] == selected_user]
 
-    # 1. NUKE SYSTEM MESSAGES
     temp = df[df['user'] != 'group_notification']
     temp = temp[~temp['message'].str.contains('<Media omitted>', na=False)]
 
-    # 2. THE NUKE (Repeated here so your table stays clean too)
     temp = temp[~temp['message'].str.contains('edited', case=False, na=False)]
 
-    # REMEMBER: If you used the absolute path earlier, update this line!
-    f = open('Whatsapp_chats/stop_hinglish.txt', 'r')
+    f = open('stop_hinglish.txt', 'r')
     stop_words = f.read()
 
     words = []
@@ -125,12 +107,12 @@ def emoji_helper(selected_user, df):
 
     return emoji_df
 
- #timeline
+ #TIMELINE
 def monthly_timeline(selected_user, df):
     if selected_user != 'overall':
         df = df[df['user'] == selected_user]
 
-    # Sort by year and month_num to ensure a smooth line
+
     timeline = df.groupby(['year', 'month_num', 'month']).count()['message'].reset_index()
     timeline = timeline.sort_values(['year', 'month_num'])
 
@@ -152,7 +134,7 @@ def week_activity_map(selected_user, df):
     if selected_user != 'overall':
         df = df[df['user'] == selected_user]
 
-    # This line MUST be indented with 4 spaces to stay inside the function
+    
     return df['day_name'].value_counts()
 
 def month_activity_map(selected_user, df):
@@ -165,10 +147,11 @@ def activity_heatmap(selected_user, df):
     if selected_user != 'overall':
         df = df[df['user'] == selected_user]
 
-    # This creates the matrix needed for the heatmap
+    # HEATMAP_CREATION
     user_heatmap = df.pivot_table(index='day_name', columns='period', values='message', aggfunc='count').fillna(0)
 
     return user_heatmap
+
 
 
 
