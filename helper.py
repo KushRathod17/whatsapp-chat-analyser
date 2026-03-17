@@ -15,7 +15,7 @@ def fetch_stats(selected_user, df):
     words = []
     for message in df['message']:
         words.extend(message.split())
-    num_media_messages = df[df['message'].str.contains('<Media omitted>')].shape[0]
+    num_media_messages = df[df['message'].astype(str).str.contains('<Media omitted>')].shape[0]
 
     links = []
     for message in df['message']:
