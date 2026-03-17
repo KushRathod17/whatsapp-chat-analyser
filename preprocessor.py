@@ -14,7 +14,7 @@ def preprocess(data):
         'message_date': dates_raw[:min_length]
     })
 
-    df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%Y, %H:%M - ')
+   df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%y, %I:%M %p - ')
     df.rename(columns={'message_date': 'date'}, inplace=True)
 
     users = []
