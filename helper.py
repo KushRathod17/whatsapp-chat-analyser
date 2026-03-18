@@ -41,6 +41,16 @@ def create_wordcloud(selected_user, df):
     temp = df[df['user'] != 'group_notification']
     temp = temp[~temp['message'].str.contains('<Media omitted>', na=False)]
     temp = temp[~temp['message'].str.contains('edited', case=False, na=False)]
+    # ... your existing stop-word/media filtering code above this ...
+    
+    text = df_wc['message'].str.cat(sep=" ")
+    
+    # ADD THIS SAFETY CHECK: If the text is empty, give it placeholder words
+    if not text or len(text.strip()) == 0:
+        text = "No Words Found"
+        
+    wc = wc.generate(text)
+    return wc
 
     def remove_stop_words(message):
         y = []
