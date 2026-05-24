@@ -13,7 +13,7 @@ if uploaded_file is not None:
     data = bytes_data.decode('utf-8', errors='ignore')
     df = preprocessor.preprocess(data)
 
-    # Fetch unique users
+ 
     user_list = df['user'].unique().tolist()
     if 'group_notifications' in user_list:
         user_list.remove('group_notifications')
@@ -23,7 +23,7 @@ if uploaded_file is not None:
     selected_user = st.sidebar.selectbox('Select User', user_list)
 
     if st.sidebar.button('Show Analysis'):
-        # Stats Area
+ 
         num_messages, words, num_media, num_links = helper.fetch_stats(selected_user, df)
 
         st.title("Top Statistics")
@@ -42,7 +42,7 @@ if uploaded_file is not None:
             st.header("Total Links")
             st.title(num_links)
 
-        # MONTHLY TIMELINE
+ 
         st.title("Monthly Timeline")
         timeline = helper.monthly_timeline(selected_user, df)
 
@@ -52,7 +52,7 @@ if uploaded_file is not None:
         plt.ylabel("Message Count")
         st.pyplot(fig)
 
-        #  DAILY TIMELINE
+    
         st.title("DailyTimeline")
         daily_timeline = helper.daily_timeline(selected_user, df)
 
@@ -62,7 +62,7 @@ if uploaded_file is not None:
         plt.ylabel("Message Count")
         st.pyplot(fig)
 
-        #ACTIVITY MAP
+
         st.title("Activity Map")
         col1,col2=st.columns(2)
         with col1:
@@ -80,24 +80,21 @@ if uploaded_file is not None:
             plt.xticks(rotation='vertical')
             st.pyplot(fig)
 
-        #HEATMAP
+  
 
         st.title("Weekly Activity Map")
         user_heatmap = helper.activity_heatmap(selected_user, df)
 
-        # Create a much larger figure so labels have room to breathe
         fig, ax = plt.subplots(figsize=(20, 10))
 
-        # 'annot=False' keeps it clean, but 'ax=ax' ensures it uses your figure
         sns.heatmap(user_heatmap, ax=ax)
 
-        # This helps prevent the "clashing" or cutting off of labels
         plt.yticks(rotation='horizontal')
         st.pyplot(fig)
 
 
 
-        # MOST BUSY USERS (Group Level)
+    
         if selected_user == 'overall':
             st.title("Most Busy Users")
             x, new_df = helper.most_busy_users(df)
@@ -111,20 +108,18 @@ if uploaded_file is not None:
             with col2:
                 st.dataframe(new_df)
 
-        # WORDCLOUD - Full Width
         st.title("WordCloud")
         df_wc = helper.create_wordcloud(selected_user, df)
         fig, ax = plt.subplots(figsize=(10, 5))
         ax.imshow(df_wc)
-        plt.axis("off")  # Removes the axis numbers for a cleaner look
+        plt.axis("off")  
         st.pyplot(fig)
 
-        # MOST COMMON WORDS
         st.title("Most Common Words")
         most_common_df = helper.most_common_words(selected_user, df)
         st.dataframe(most_common_df)
 
-        # EMOJI ANALYSIS
+      
         st.title("Emoji Analysis")
         emoji_df = helper.emoji_helper(selected_user, df)
 
